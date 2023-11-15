@@ -201,7 +201,7 @@ func (h *Honeycomb) Flush() (err error) {
 // than the PendingWorkCapacity, this will block a Flush until more pending
 // work can be enqueued.
 func (h *Honeycomb) Add(ev *Event) {
-	fmt.Println("Inside Transmission Add--", ev)
+	//fmt.Println("Inside Transmission Add--", ev)
 	if h.tryAdd(ev) {
 		h.Metrics.Increment("messages_queued")
 		return
@@ -220,7 +220,7 @@ func (h *Honeycomb) Add(ev *Event) {
 // was unsucessful because the muster queue (muster.Work) is full.
 func (h *Honeycomb) tryAdd(ev *Event) bool {
 
-	fmt.Println("Inside TryAdd to process the event--", ev.ResourceSpan)
+	//fmt.Println("Inside TryAdd to process the event--", ev.ResourceSpan)
 	h.musterLock.RLock()
 	defer h.musterLock.RUnlock()
 
