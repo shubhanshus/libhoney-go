@@ -270,13 +270,14 @@ type transitionOutput struct {
 
 func (to *transitionOutput) Add(ev *transmission.Event) {
 	origEvent := &Event{
-		APIHost:     ev.APIHost,
-		WriteKey:    ev.APIKey,
-		Dataset:     ev.Dataset,
-		SampleRate:  ev.SampleRate,
-		Timestamp:   ev.Timestamp,
-		Metadata:    ev.Metadata,
-		fieldHolder: fieldHolder{data: ev.Data},
+		APIHost:      ev.APIHost,
+		WriteKey:     ev.APIKey,
+		Dataset:      ev.Dataset,
+		SampleRate:   ev.SampleRate,
+		Timestamp:    ev.Timestamp,
+		Metadata:     ev.Metadata,
+		ResourceSpan: ev.ResourceSpan,
+		fieldHolder:  fieldHolder{data: ev.Data},
 	}
 	to.Output.Add(origEvent)
 }
@@ -832,7 +833,6 @@ func (e *Event) Send() error {
 // Once you Send an event, any addition calls to add data to that event will
 // return without doing anything. Once the event is sent, it becomes immutable.
 func (e *Event) SendPresampled() (err error) {
-	fmt.Println("What we got is ", e.ResourceSpan)
 	if e.client == nil {
 		e.client = &Client{}
 	}
@@ -891,7 +891,7 @@ func (e *Event) SendPresampled() (err error) {
 		ResourceSpan: e.ResourceSpan,
 	}
 
-	fmt.Println("Before transmission the ResourceSpan is ", e.ResourceSpan)
+	//fmt.Println("Before transmission the ResourceSpan is ", e.ResourceSpan)
 	e.client.transmission.Add(txEvent)
 	return nil
 }

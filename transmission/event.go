@@ -51,14 +51,18 @@ func (e *Event) MarshalJSON() ([]byte, error) {
 		sampleRate = 0
 	}
 
+	//fmt.Println("Incoming Marshal ResourceSpan is", e.ResourceSpan)
 	return json.Marshal(struct {
-		Data       marshallableMap `json:"data"`
-		SampleRate uint            `json:"samplerate,omitempty"`
-		Timestamp  *time.Time      `json:"time,omitempty"`
-	}{e.Data, sampleRate, tPointer})
+		Data          marshallableMap  `json:"data"`
+		SampleRate    uint             `json:"samplerate,omitempty"`
+		Timestamp     *time.Time       `json:"time,omitempty"`
+		ResourceSpans v1.ResourceSpans `json:"resourceSpan,omitempty"`
+	}{e.Data, sampleRate, tPointer, e.ResourceSpan})
 }
 
 func (e *Event) MarshalMsgpack() (byts []byte, err error) {
+
+	//fmt.Println("Incoming MarshalMsgpack ResourceSpan is", e.ResourceSpan)
 	tPointer := &(e.Timestamp)
 	if e.Timestamp.IsZero() {
 		tPointer = nil
@@ -81,10 +85,11 @@ func (e *Event) MarshalMsgpack() (byts []byte, err error) {
 	encoder := msgpack.NewEncoder(&buf)
 	encoder.SetCustomStructTag("json")
 	err = encoder.Encode(struct {
-		Data       map[string]interface{} `msgpack:"data"`
-		SampleRate uint                   `msgpack:"samplerate,omitempty"`
-		Timestamp  *time.Time             `msgpack:"time,omitempty"`
-	}{e.Data, sampleRate, tPointer})
+		Data          map[string]interface{} `msgpack:"data"`
+		SampleRate    uint                   `msgpack:"samplerate,omitempty"`
+		Timestamp     *time.Time             `msgpack:"time,omitempty"`
+		ResourceSpans v1.ResourceSpans       `json:"resourceSpan,omitempty"`
+	}{e.Data, sampleRate, tPointer, e.ResourceSpan})
 	return buf.Bytes(), err
 }
 

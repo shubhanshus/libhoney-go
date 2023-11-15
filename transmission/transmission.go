@@ -219,6 +219,8 @@ func (h *Honeycomb) Add(ev *Event) {
 // tryAdd attempts to add ev to the underlying muster. It returns false if this
 // was unsucessful because the muster queue (muster.Work) is full.
 func (h *Honeycomb) tryAdd(ev *Event) bool {
+
+	fmt.Println("Inside TryAdd to process the event--", ev.ResourceSpan)
 	h.musterLock.RLock()
 	defer h.musterLock.RUnlock()
 
