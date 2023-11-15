@@ -88,7 +88,7 @@ func (e *Event) MarshalMsgpack() (byts []byte, err error) {
 		Data          map[string]interface{} `msgpack:"data"`
 		SampleRate    uint                   `msgpack:"samplerate,omitempty"`
 		Timestamp     *time.Time             `msgpack:"time,omitempty"`
-		ResourceSpans v1.ResourceSpans       `json:"resourceSpan,omitempty"`
+		ResourceSpans v1.ResourceSpans       `msgpack:"resourceSpan,omitempty"`
 	}{e.Data, sampleRate, tPointer, e.ResourceSpan})
 	return buf.Bytes(), err
 }
