@@ -763,6 +763,8 @@ func (e *Event) AddField(key string, val interface{}) {
 // Adds to an event that happen after it has been sent will return without
 // having any effect.
 func (e *Event) Add(data interface{}) error {
+
+	fmt.Println("Inside Add function & resource span is ", e.ResourceSpan)
 	e.sendLock.Lock()
 	defer e.sendLock.Unlock()
 	if e.sent == true {
@@ -830,6 +832,7 @@ func (e *Event) Send() error {
 // Once you Send an event, any addition calls to add data to that event will
 // return without doing anything. Once the event is sent, it becomes immutable.
 func (e *Event) SendPresampled() (err error) {
+	fmt.Println("What we got is ", e.ResourceSpan)
 	if e.client == nil {
 		e.client = &Client{}
 	}
@@ -887,6 +890,8 @@ func (e *Event) SendPresampled() (err error) {
 		Data:         e.data,
 		ResourceSpan: e.ResourceSpan,
 	}
+
+	fmt.Println("Before transmission the ResourceSpan is ", e.ResourceSpan)
 	e.client.transmission.Add(txEvent)
 	return nil
 }

@@ -201,6 +201,7 @@ func (h *Honeycomb) Flush() (err error) {
 // than the PendingWorkCapacity, this will block a Flush until more pending
 // work can be enqueued.
 func (h *Honeycomb) Add(ev *Event) {
+	fmt.Println("Inside Transmission Add--", ev)
 	if h.tryAdd(ev) {
 		h.Metrics.Increment("messages_queued")
 		return
