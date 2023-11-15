@@ -13,5 +13,6 @@ require (
 	github.com/klauspost/compress v1.16.6
 	github.com/stretchr/testify v1.8.4
 	github.com/vmihailenco/msgpack/v5 v5.3.5
+	go.opentelemetry.io/proto/otlp v1.0.0
 	gopkg.in/alexcesaro/statsd.v2 v2.0.0
 )

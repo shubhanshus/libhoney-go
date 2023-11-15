@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/honeycombio/libhoney-go/transmission"
+	v1 "go.opentelemetry.io/proto/otlp/trace/v1"
 	statsd "gopkg.in/alexcesaro/statsd.v2"
 )
 
@@ -413,6 +414,9 @@ type Event struct {
 	// on the Response object read off the Responses channel. It is not sent to
 	// Honeycomb with the event.
 	Metadata interface{}
+
+	//Custom ResourceSpan
+	ResourceSpan v1.ResourceSpans
 
 	// fieldHolder contains fields (and methods) common to both events and builders
 	fieldHolder
@@ -874,13 +878,14 @@ func (e *Event) SendPresampled() (err error) {
 
 	e.client.ensureTransmission()
 	txEvent := &transmission.Event{
-		APIHost:    e.APIHost,
-		APIKey:     e.WriteKey,
-		Dataset:    e.Dataset,
-		SampleRate: e.SampleRate,
-		Timestamp:  e.Timestamp,
-		Metadata:   e.Metadata,
-		Data:       e.data,
+		APIHost:      e.APIHost,
+		APIKey:       e.WriteKey,
+		Dataset:      e.Dataset,
+		SampleRate:   e.SampleRate,
+		Timestamp:    e.Timestamp,
+		Metadata:     e.Metadata,
+		Data:         e.data,
+		ResourceSpan: e.ResourceSpan,
 	}
 	e.client.transmission.Add(txEvent)
 	return nil

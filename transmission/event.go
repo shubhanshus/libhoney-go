@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	v1 "go.opentelemetry.io/proto/otlp/trace/v1"
 	"reflect"
 	"sort"
 	"time"
@@ -27,6 +28,9 @@ type Event struct {
 	// on the Response object read off the Responses channel. It is not sent to
 	// Honeycomb with the event.
 	Metadata interface{}
+
+	// Custom ResourceSpan
+	ResourceSpan v1.ResourceSpans
 
 	// Data contains the content of the event (all the fields and their values)
 	Data map[string]interface{}
