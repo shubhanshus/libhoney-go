@@ -635,6 +635,11 @@ func (b *batchAgg) encodeBatchMsgp(events []*Event) ([]byte, int) {
 	// Prepend space for largest possible msgpack array header.
 	buf.Write(arrayHeader[:])
 	for i, ev := range events {
+
+		if ev.ResourceSpan.ScopeSpans != nil {
+			fmt.Println("Inside encodeBatchMsgp-- ", ev.ResourceSpan.ScopeSpans)
+		}
+
 		evByt, err := msgpack.Marshal(ev)
 		if err != nil {
 			b.enqueueResponse(Response{
