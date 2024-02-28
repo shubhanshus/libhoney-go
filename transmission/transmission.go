@@ -384,7 +384,7 @@ func (b *batchAgg) fireBatch(events []*Event) {
 	var contentType string
 	if b.enableMsgpackEncoding {
 		contentType = "application/msgpack"
-		encEvs, numEncoded = b.encodeBatchMsgp(events)
+		encEvs, numEncoded = b.EncodeBatchMsgp(events)
 	} else {
 		contentType = "application/json"
 		encEvs, numEncoded = b.encodeBatchJSON(events)
@@ -626,7 +626,7 @@ func (b *batchAgg) encodeBatchJSON(events []*Event) ([]byte, int) {
 	return buf.Bytes(), numEncoded
 }
 
-func (b *batchAgg) encodeBatchMsgp(events []*Event) ([]byte, int) {
+func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 	// Msgpack arrays need to be prefixed with the number of elements, but we
 	// don't know in advance how many we'll encode, because the msgpack lib
 	// doesn't do size estimation. Also, the array header is of variable size
