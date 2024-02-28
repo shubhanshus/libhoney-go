@@ -2,6 +2,7 @@ package transmission
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"sync"
@@ -52,6 +53,10 @@ func (w *WriterSender) Add(ev *Event) {
 		Dataset    string                 `json:"dataset,omitempty"`
 	}{ev.Data, sampleRate, tPointer, ev.Dataset})
 	m = append(m, '\n')
+
+	if ev.ResourceSpan.ScopeSpans != nil {
+		fmt.Println("Incoming Marshal ResourceSpan in Add Writer is", ev.ResourceSpan)
+	}
 
 	w.Lock()
 	defer w.Unlock()

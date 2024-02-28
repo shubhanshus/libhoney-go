@@ -201,7 +201,11 @@ func (h *Honeycomb) Flush() (err error) {
 // than the PendingWorkCapacity, this will block a Flush until more pending
 // work can be enqueued.
 func (h *Honeycomb) Add(ev *Event) {
-	//fmt.Println("Inside Transmission Add--", ev)
+
+	if ev.ResourceSpan.ScopeSpans != nil {
+		fmt.Println("Inside HC Transmission Add the Span is ", ev.ResourceSpan)
+	}
+
 	if h.tryAdd(ev) {
 		h.Metrics.Increment("messages_queued")
 		return
@@ -394,6 +398,11 @@ func (b *batchAgg) fireBatch(events []*Event) {
 	// valid event (some may be nil)
 	var apiHost, writeKey, dataset string
 	for _, ev := range events {
+
+		if ev.ResourceSpan.ScopeSpans != nil {
+			fmt.Println("Inside fireBatch & the value of the the ResourceSpan is", ev.ResourceSpan)
+		}
+
 		if ev != nil {
 			apiHost = ev.APIHost
 			writeKey = ev.APIKey
@@ -637,7 +646,7 @@ func (b *batchAgg) encodeBatchMsgp(events []*Event) ([]byte, int) {
 	for i, ev := range events {
 
 		if ev.ResourceSpan.ScopeSpans != nil {
-			fmt.Println("Inside encodeBatchMsgp-- ", ev.ResourceSpan.ScopeSpans)
+			fmt.Println("We got spans for encoding inside encodeBatchMsgp ")
 		}
 
 		evByt, err := msgpack.Marshal(ev)
