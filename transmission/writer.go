@@ -54,8 +54,8 @@ func (w *WriterSender) Add(ev *Event) {
 	}{ev.Data, sampleRate, tPointer, ev.Dataset})
 	m = append(m, '\n')
 
-	if ev.ResourceSpan.ScopeSpans != nil {
-		fmt.Println("Incoming Marshal ResourceSpan in Add Writer is", ev.ResourceSpan)
+	if ev.ResourceSpans.ScopeSpans != nil {
+		fmt.Println("Incoming Marshal ResourceSpan in Add Writer is", ev.ResourceSpans)
 	}
 
 	w.Lock()

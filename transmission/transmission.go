@@ -643,8 +643,8 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 
 		evByt, err := msgpack.Marshal(ev)
 		if err != nil {
-			if ev.ResourceSpan.ScopeSpans != nil {
-				fmt.Println("We got error for encodeBatchMsgp ResSpan", ev.ResourceSpan)
+			if ev.ResourceSpans.ScopeSpans != nil {
+				fmt.Println("We got error for encodeBatchMsgp ResSpan", ev.ResourceSpans)
 			}
 			fmt.Println("We got error while encoding the event inside encodeBatchMsgp ", err)
 			b.enqueueResponse(Response{

@@ -30,7 +30,7 @@ type Event struct {
 	Metadata interface{}
 
 	// Custom ResourceSpan
-	ResourceSpan v1.ResourceSpans
+	ResourceSpans v1.ResourceSpans
 
 	// Data contains the content of the event (all the fields and their values)
 	Data map[string]interface{}
@@ -56,8 +56,8 @@ func (e *Event) MarshalJSON() ([]byte, error) {
 		Data          marshallableMap  `json:"data"`
 		SampleRate    uint             `json:"samplerate,omitempty"`
 		Timestamp     *time.Time       `json:"time,omitempty"`
-		ResourceSpans v1.ResourceSpans `json:"resourceSpan,omitempty"`
-	}{e.Data, sampleRate, tPointer, e.ResourceSpan})
+		ResourceSpans v1.ResourceSpans `json:"resourcespans,omitempty"`
+	}{e.Data, sampleRate, tPointer, e.ResourceSpans})
 }
 
 func (e *Event) MarshalMsgpack() (byts []byte, err error) {
@@ -88,8 +88,8 @@ func (e *Event) MarshalMsgpack() (byts []byte, err error) {
 		Data          map[string]interface{} `msgpack:"data"`
 		SampleRate    uint                   `msgpack:"samplerate,omitempty"`
 		Timestamp     *time.Time             `msgpack:"time,omitempty"`
-		ResourceSpans v1.ResourceSpans       `msgpack:"resourceSpan,omitempty"`
-	}{e.Data, sampleRate, tPointer, e.ResourceSpan})
+		ResourceSpans v1.ResourceSpans       `msgpack:"resourcespans,omitempty"`
+	}{e.Data, sampleRate, tPointer, e.ResourceSpans})
 	return buf.Bytes(), err
 }
 

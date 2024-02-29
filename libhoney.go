@@ -270,14 +270,14 @@ type transitionOutput struct {
 
 func (to *transitionOutput) Add(ev *transmission.Event) {
 	origEvent := &Event{
-		APIHost:      ev.APIHost,
-		WriteKey:     ev.APIKey,
-		Dataset:      ev.Dataset,
-		SampleRate:   ev.SampleRate,
-		Timestamp:    ev.Timestamp,
-		Metadata:     ev.Metadata,
-		ResourceSpan: ev.ResourceSpan,
-		fieldHolder:  fieldHolder{data: ev.Data},
+		APIHost:       ev.APIHost,
+		WriteKey:      ev.APIKey,
+		Dataset:       ev.Dataset,
+		SampleRate:    ev.SampleRate,
+		Timestamp:     ev.Timestamp,
+		Metadata:      ev.Metadata,
+		ResourceSpans: ev.ResourceSpans,
+		fieldHolder:   fieldHolder{data: ev.Data},
 	}
 	to.Output.Add(origEvent)
 }
@@ -417,7 +417,7 @@ type Event struct {
 	Metadata interface{}
 
 	//Custom ResourceSpan
-	ResourceSpan v1.ResourceSpans
+	ResourceSpans v1.ResourceSpans
 
 	// fieldHolder contains fields (and methods) common to both events and builders
 	fieldHolder
@@ -765,7 +765,7 @@ func (e *Event) AddField(key string, val interface{}) {
 // having any effect.
 func (e *Event) Add(data interface{}) error {
 
-	fmt.Println("Inside Add function & resource span is ", e.ResourceSpan)
+	fmt.Println("Inside Add function & resource span is ", e.ResourceSpans)
 	e.sendLock.Lock()
 	defer e.sendLock.Unlock()
 	if e.sent == true {
@@ -881,14 +881,14 @@ func (e *Event) SendPresampled() (err error) {
 
 	e.client.ensureTransmission()
 	txEvent := &transmission.Event{
-		APIHost:      e.APIHost,
-		APIKey:       e.WriteKey,
-		Dataset:      e.Dataset,
-		SampleRate:   e.SampleRate,
-		Timestamp:    e.Timestamp,
-		Metadata:     e.Metadata,
-		Data:         e.data,
-		ResourceSpan: e.ResourceSpan,
+		APIHost:       e.APIHost,
+		APIKey:        e.WriteKey,
+		Dataset:       e.Dataset,
+		SampleRate:    e.SampleRate,
+		Timestamp:     e.Timestamp,
+		Metadata:      e.Metadata,
+		Data:          e.data,
+		ResourceSpans: e.ResourceSpans,
 	}
 
 	//fmt.Println("Before transmission the ResourceSpan is ", e.ResourceSpan)
