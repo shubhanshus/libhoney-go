@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	v1 "go.opentelemetry.io/proto/otlp/trace/v1"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -685,8 +686,14 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 	byts := buf.Bytes()[len(arrayHeader)-headerBuf.Len():]
 	copy(byts, headerBuf.Bytes())
 
-	fmt.Println("The encoded msgpack bytes are ", byts)
+	reader := bytes.NewReader(byts)
 
+	var resultEv []batchedEvent
+	err := unmarshal(reader, &resultEv)
+	if err != nil {
+		fmt.Println("Error unmarshalling", err)
+	}
+	fmt.Println("Resulting events", resultEv)
 	return byts, numEncoded
 }
 
@@ -759,4 +766,17 @@ func buildReqReader(jsonEncoded []byte, compress bool) (io.Reader, bool) {
 // nower to make testing easier
 type nower interface {
 	Now() time.Time
+}
+
+func unmarshal(data io.Reader, v interface{}) error {
+	decoder := msgpack.NewDecoder(data)
+	decoder.UseLooseInterfaceDecoding(true)
+	return decoder.Decode(v)
+}
+
+type batchedEvent struct {
+	MsgPackTimestamp *time.Time             `msgpack:"time,omitempty"`
+	SampleRate       int64                  `json:"samplerate" msgpack:"samplerate"`
+	Data             map[string]interface{} `json:"data" msgpack:"data"`
+	ResourceSpans    v1.ResourceSpans       `json:"resourcespan,omitempty" msgpack:"resourcespans,omitempty"`
 }
