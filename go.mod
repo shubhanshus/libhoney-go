@@ -14,5 +14,6 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/vmihailenco/msgpack/v5 v5.3.5
 	go.opentelemetry.io/proto/otlp v1.0.0
+	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/alexcesaro/statsd.v2 v2.0.0
 )

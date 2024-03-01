@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	v1 "go.opentelemetry.io/proto/otlp/trace/v1"
+	"google.golang.org/protobuf/proto"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -654,9 +655,9 @@ func (b *batchAgg) encodeBatchMsgp(events []*Event) ([]byte, int) {
 		var resourceSpansBytes []byte
 		var err error
 		if ev.ResourceSpans.ScopeSpans != nil {
-			// For ResourceSpans, we need to marshal it into bytes
-			resourceSpansBytes, err = msgpack.Marshal(ev.ResourceSpans)
+			resourceSpansBytes, err = proto.Marshal(&ev.ResourceSpans)
 			if err != nil {
+				// handle error
 				fmt.Println("Error in marshalling ResourceSpans", err)
 			}
 		}
