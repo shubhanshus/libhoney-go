@@ -686,10 +686,10 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 	byts := buf.Bytes()[len(arrayHeader)-headerBuf.Len():]
 	copy(byts, headerBuf.Bytes())
 
-	reader := bytes.NewReader(byts)
+	//reader := bytes.NewReader(byts)
 
-	var resultEv []Event
-	err := unmarshal(reader, &resultEv)
+	var resultEv []batchedEvent
+	err := msgpack.Unmarshal(byts, &resultEv)
 	if err != nil {
 		fmt.Println("Error unmarshalling", err)
 	}
