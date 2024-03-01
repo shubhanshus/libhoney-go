@@ -688,7 +688,7 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 
 	reader := bytes.NewReader(byts)
 
-	var resultEv []batchedEvent
+	var resultEv []Event
 	err := unmarshal(reader, &resultEv)
 	if err != nil {
 		fmt.Println("Error unmarshalling", err)
