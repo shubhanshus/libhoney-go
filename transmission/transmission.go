@@ -651,10 +651,14 @@ func (b *batchAgg) encodeBatchMsgp(events []*Event) ([]byte, int) {
 		evMsgPack.Metadata = ev.Metadata
 		evMsgPack.Data = ev.Data
 
-		// For ResourceSpans, we need to marshal it into bytes
-		resourceSpansBytes, err := msgpack.Marshal(ev.ResourceSpans)
-		if err != nil {
-			fmt.Println("Error in marshalling ResourceSpans", err)
+		var resourceSpansBytes []byte
+		var err error
+		if ev.ResourceSpans.ScopeSpans != nil {
+			// For ResourceSpans, we need to marshal it into bytes
+			resourceSpansBytes, err = msgpack.Marshal(ev.ResourceSpans)
+			if err != nil {
+				fmt.Println("Error in marshalling ResourceSpans", err)
+			}
 		}
 		evMsgPack.ResourceSpans = resourceSpansBytes
 
