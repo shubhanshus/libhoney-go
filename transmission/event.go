@@ -36,6 +36,30 @@ type Event struct {
 	Data map[string]interface{}
 }
 
+type EventMsgPack struct {
+	// APIKey, if set, overrides whatever is found in Config
+	APIKey string
+	// Dataset, if set, overrides whatever is found in Config
+	Dataset string
+	// SampleRate, if set, overrides whatever is found in Config
+	SampleRate uint
+	// APIHost, if set, overrides whatever is found in Config
+	APIHost string
+	// Timestamp, if set, specifies the time for this event. If unset, defaults
+	// to Now()
+	Timestamp time.Time
+	// Metadata is a field for you to add in data that will be handed back to you
+	// on the Response object read off the Responses channel. It is not sent to
+	// Honeycomb with the event.
+	Metadata interface{}
+
+	// Custom ResourceSpan
+	ResourceSpans []byte
+
+	// Data contains the content of the event (all the fields and their values)
+	Data map[string]interface{}
+}
+
 // Marshaling an Event for batching up to the Honeycomb servers. Omits fields
 // that aren't specific to this particular event, and allows for behavior like
 // omitempty'ing a zero'ed out time.Time.

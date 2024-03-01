@@ -385,7 +385,7 @@ func (b *batchAgg) fireBatch(events []*Event) {
 	var contentType string
 	if b.enableMsgpackEncoding {
 		contentType = "application/msgpack"
-		encEvs, numEncoded = b.EncodeBatchMsgp(events)
+		encEvs, numEncoded = b.encodeBatchMsgp(events)
 	} else {
 		contentType = "application/json"
 		encEvs, numEncoded = b.encodeBatchJSON(events)
@@ -627,7 +627,7 @@ func (b *batchAgg) encodeBatchJSON(events []*Event) ([]byte, int) {
 	return buf.Bytes(), numEncoded
 }
 
-func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
+func (b *batchAgg) encodeBatchMsgp(events []*Event) ([]byte, int) {
 	// Msgpack arrays need to be prefixed with the number of elements, but we
 	// don't know in advance how many we'll encode, because the msgpack lib
 	// doesn't do size estimation. Also, the array header is of variable size
@@ -642,12 +642,24 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 	buf.Write(arrayHeader[:])
 	for i, ev := range events {
 
-		evByt, err := msgpack.Marshal(ev)
+		var evMsgPack EventMsgPack
+		evMsgPack.APIKey = ev.APIKey
+		evMsgPack.Dataset = ev.Dataset
+		evMsgPack.SampleRate = ev.SampleRate
+		evMsgPack.APIHost = ev.APIHost
+		evMsgPack.Timestamp = ev.Timestamp
+		evMsgPack.Metadata = ev.Metadata
+		evMsgPack.Data = ev.Data
+
+		// For ResourceSpans, we need to marshal it into bytes
+		resourceSpansBytes, err := msgpack.Marshal(ev.ResourceSpans)
 		if err != nil {
-			if ev.ResourceSpans.ScopeSpans != nil {
-				fmt.Println("We got error for encodeBatchMsgp ResSpan", ev.ResourceSpans)
-			}
-			fmt.Println("We got error while encoding the event inside encodeBatchMsgp ", err)
+			fmt.Println("Error in marshalling ResourceSpans", err)
+		}
+		evMsgPack.ResourceSpans = resourceSpansBytes
+
+		evByt, err := msgpack.Marshal(evMsgPack)
+		if err != nil {
 			b.enqueueResponse(Response{
 				Err:      err,
 				Metadata: ev.Metadata,
@@ -673,9 +685,6 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 		}
 
 		buf.Write(evByt)
-		if ev.ResourceSpans.ScopeSpans != nil {
-			fmt.Println("We have ResourceSpans here ")
-		}
 		numEncoded++
 	}
 
@@ -686,14 +695,6 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 	byts := buf.Bytes()[len(arrayHeader)-headerBuf.Len():]
 	copy(byts, headerBuf.Bytes())
 
-	//reader := bytes.NewReader(byts)
-
-	var resultEv []batchedEvent
-	err := msgpack.Unmarshal(byts, &resultEv)
-	if err != nil {
-		fmt.Println("Error unmarshalling", err)
-	}
-	fmt.Println("Resulting events", resultEv)
 	return byts, numEncoded
 }
 
