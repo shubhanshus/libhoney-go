@@ -672,6 +672,9 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 		}
 
 		buf.Write(evByt)
+		if ev.ResourceSpans.ScopeSpans != nil {
+			fmt.Println("We have ResourceSpans here ")
+		}
 		numEncoded++
 	}
 
