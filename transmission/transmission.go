@@ -682,6 +682,8 @@ func (b *batchAgg) EncodeBatchMsgp(events []*Event) ([]byte, int) {
 	byts := buf.Bytes()[len(arrayHeader)-headerBuf.Len():]
 	copy(byts, headerBuf.Bytes())
 
+	fmt.Println("The encoded msgpack bytes are ", byts)
+
 	return byts, numEncoded
 }
 
