@@ -35,9 +35,9 @@ import (
 
 const (
 	// Size limit for a serialized request body sent for a batch.
-	apiMaxBatchSize int = 5000000 // 5MB
+	apiMaxBatchSize int = 10000000 // 10MB
 	// Size limit for a single serialized event within a batch.
-	apiEventSizeMax    int = 1000000 // 1MB
+	apiEventSizeMax    int = 5000000 // 5MB
 	maxOverflowBatches int = 10
 	// Default start-to-finish timeout for batch send HTTP requests.
 	defaultSendTimeout = time.Second * 60
