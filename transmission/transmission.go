@@ -37,7 +37,7 @@ const (
 	// Size limit for a serialized request body sent for a batch.
 	apiMaxBatchSize int = 5000000 // 5MB
 	// Size limit for a single serialized event within a batch.
-	apiEventSizeMax    int = 100000 // 100KB
+	apiEventSizeMax    int = 1000000 // 1MB
 	maxOverflowBatches int = 10
 	// Default start-to-finish timeout for batch send HTTP requests.
 	defaultSendTimeout = time.Second * 60
@@ -674,13 +674,8 @@ func (b *batchAgg) encodeBatchMsgp(events []*Event) ([]byte, int) {
 			events[i] = nil
 			continue
 		}
-
-		// Capture the Size of ResourceSpans too
-		entireEventLen := len(evByt) + len(resourceSpansBytes)
-
 		// if the event is too large to ever send, add an error to the queue
-		// Include the ResourceSpans size in the check too
-		if entireEventLen > apiEventSizeMax {
+		if len(evByt) > apiEventSizeMax {
 			b.enqueueResponse(Response{
 				Err:      fmt.Errorf("event exceeds max event size of %d bytes, API will not accept this event", apiEventSizeMax),
 				Metadata: ev.Metadata,
@@ -689,7 +684,7 @@ func (b *batchAgg) encodeBatchMsgp(events []*Event) ([]byte, int) {
 			continue
 		}
 
-		if buf.Len()+entireEventLen > apiMaxBatchSize {
+		if buf.Len()+len(evByt) > apiMaxBatchSize {
 			b.reenqueueEvents(events[i:])
 			break
 		}
